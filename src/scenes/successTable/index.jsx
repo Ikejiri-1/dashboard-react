@@ -7,33 +7,20 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Box } from "@mui/material";
 import Header from "../../components/Header";
+import { useSelector } from "react-redux";
+import { selectIncomesSuccess } from "../../store/slices/incomeSelector";
 
 function ccyFormat(num) {
   return `${num.toFixed(2)}`;
-}
-
-function priceRow(qty, unit) {
-  return qty * unit;
-}
-
-function createRow(desc, qty, unit) {
-  const price = priceRow(qty, unit);
-  return { desc, qty, unit, price };
 }
 
 function total(items) {
   return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
 }
 
-const rows = [
-  createRow("Paperclips (Box)", 100, 1.15),
-  createRow("Paper (Case)", 10, 45.99),
-  createRow("Waste Basket", 2, 17.99),
-];
-
-const invoiceTotal = total(rows);
-
 export default function SuccessTable() {
+  const rows = useSelector(selectIncomesSuccess);
+  const invoiceTotal = total(rows);
   return (
     <Box ml={"20px"}>
       <Box display="flex" justifyContent="space-between" alignItems="center">

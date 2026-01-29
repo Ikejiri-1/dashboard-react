@@ -7,20 +7,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso } from "react-virtuoso";
-import Chance from "chance";
 import { Box } from "@mui/material";
 import Header from "../../components/Header";
+import { useSelector } from "react-redux";
 
-const chance = new Chance(42);
-
-function createData(id) {
-  return {
-    id,
-    firstName: chance.first(),
-    phone: chance.phone(),
-    state: chance.state({ full: true }),
-  };
-}
+import FormClients from "../../components/FormClients";
 
 const columns = [
   {
@@ -39,9 +30,41 @@ const columns = [
     label: "Número",
     dataKey: "phone",
   },
-];
+  {
+    width: 100,
+    label: "Forma de pagamento",
+    dataKey: "paymentType",
+  },
+  {
+    width: 100,
+    label: "Status do pagamento",
+    dataKey: "status",
 
-const rows = Array.from({ length: 12 }, (_, index) => createData(index));
+    renderCell: (status) => {
+      const colors = {
+        PAGO: "#2e7c67",
+        PENDENTE: "#e9c46a",
+        ATRASADO: "#c3322d",
+      };
+      return (
+        <Box
+          sx={{
+            px: 2,
+            py: 0.5,
+            borderRadius: "12px",
+            fontSize: "0.8rem",
+            fontWeight: 600,
+            width: "fit-content",
+            color: "#fff",
+            backgroundColor: colors[status],
+          }}
+        >
+          {status}
+        </Box>
+      );
+    },
+  },
+];
 
 const VirtuosoTableComponents = {
   Scroller: React.forwardRef((props, ref) => (
@@ -88,7 +111,9 @@ function rowContent(_index, row) {
           key={column.dataKey}
           align={column.numeric || false ? "right" : "left"}
         >
-          {row[column.dataKey]}
+          {column.renderCell
+            ? column.renderCell(row[column.dataKey], row)
+            : row[column.dataKey]}
         </TableCell>
       ))}
     </>
@@ -96,25 +121,30 @@ function rowContent(_index, row) {
 }
 
 export default function ClientsTable() {
+  const rows = useSelector((state) => state.incomes.items);
+
   return (
-    <Box
-      ml={"20px"}
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      gap={"2em"}
-    >
-      <Box>
-        <Header title="Clientes" subtitle="Lista de clientes" />
+    <>
+      <Box
+        ml={"20px"}
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        gap={"2em"}
+      >
+        <Box>
+          <Header title="Clientes" subtitle="Lista de clientes" />
+        </Box>
+        <FormClients />
+        <Paper style={{ width: "70%", margin: "0 auto", height: "59vh" }}>
+          <TableVirtuoso
+            data={rows}
+            components={VirtuosoTableComponents}
+            fixedHeaderContent={fixedHeaderContent}
+            itemContent={rowContent}
+          />
+        </Paper>
       </Box>
-      <Paper style={{ width: "70%", margin: "0 auto", height: "59vh" }}>
-        <TableVirtuoso
-          data={rows}
-          components={VirtuosoTableComponents}
-          fixedHeaderContent={fixedHeaderContent}
-          itemContent={rowContent}
-        />
-      </Paper>
-    </Box>
+    </>
   );
 }
