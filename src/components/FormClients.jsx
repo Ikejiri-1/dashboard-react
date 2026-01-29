@@ -108,12 +108,4 @@ const FormClients = () => {
   );
 };
 
-const FormTables = () => {
-  return (
-    <>
-      <form></form>
-    </>
-  );
-};
-
 export default FormClients;

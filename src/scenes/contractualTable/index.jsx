@@ -9,23 +9,25 @@ import { Box } from "@mui/material";
 import Header from "../../components/Header";
 import { useSelector } from "react-redux";
 import { selectIncomesContractual } from "../../store/slices/incomeSelector";
+import FormTable from "../../components/FormTables";
 
-function ccyFormat(num) {
-  return `${num.toFixed(2)}`;
-}
-
-function total(items) {
-  return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
-}
+const formatCurrency = (value) =>
+  Number(value || 0)
+    .toFixed(2)
+    .toLocaleString("pr-BR", { style: "currency", currency: "BRL" });
 
 export default function ContractualTable() {
   const rows = useSelector(selectIncomesContractual);
-  const invoiceTotal = total(rows);
+  const totalAmount = rows.reduce(
+    (sum, row) => sum + Number(row.totalAmount || 0),
+    0,
+  );
   return (
     <Box ml={"20px"}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="Tabela Contratual" subtitle="Lista de clientes" />
       </Box>
+      <FormTable type="contractual" />
       <TableContainer
         component={Paper}
         sx={{ width: "90%", margin: "100px auto 0 auto" }}
@@ -33,31 +35,35 @@ export default function ContractualTable() {
         <Table sx={{ minWidth: 700 }} aria-label="spanning table">
           <TableHead>
             <TableRow>
-              <TableCell align="center" colSpan={3}>
-                Details
+              <TableCell align="center" colSpan={6}>
+                Detalhes
               </TableCell>
-              <TableCell align="right">Price</TableCell>
+              <TableCell align="right">Total</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Desc</TableCell>
+              <TableCell>Cliente</TableCell>
+              <TableCell align="right">Entrada</TableCell>
               <TableCell align="right">Quantidade de parcelas</TableCell>
-              <TableCell align="right">Valor da parcela</TableCell>
               <TableCell align="right">Valor final</TableCell>
+              <TableCell align="right">Ínicio do contrato</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <TableRow key={row.desc}>
-                <TableCell>{row.desc}</TableCell>
-                <TableCell align="right">{row.qty}</TableCell>
-                <TableCell align="right">{row.unit}</TableCell>
-                <TableCell align="right">{ccyFormat(row.price)}</TableCell>
+              <TableRow key={row.id}>
+                <TableCell align="left">{row.customer}</TableCell>
+                <TableCell align="right">{row.entrance}</TableCell>
+                <TableCell align="right">{row.installments}</TableCell>
+                <TableCell align="right">
+                  {formatCurrency(row.totalAmount)}
+                </TableCell>
+                <TableCell align="right">{row.startMonth}</TableCell>
               </TableRow>
             ))}
             <TableRow>
               <TableCell rowSpan={3} />
-              <TableCell colSpan={2}>Total</TableCell>
-              <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
+              <TableCell colSpan={5}></TableCell>
+              <TableCell align="right">{formatCurrency(totalAmount)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
