@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import { ColorModeContext, useMode } from "./theme";
+import { ThemeProvider } from "@mui/material";
+import { Route, Routes } from "react-router-dom";
+import CssBaseline from "@mui/material/CssBaseline";
+import Dashboard from "./scenes/dashboard";
+import Topbar from "./scenes/global/Topbar";
+import Sidebar from "./scenes/global/Sidebar";
+import Calendar from "./scenes/calendar";
+import ClientsTable from "./scenes/clients";
+import SuccessTable from "./scenes/successTable";
+import ContractualTable from "./scenes/contractualTable";
+// import Form from "./scenes/form";
+// import Calendar from "./scenes/calendar";
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [theme, colorMode] = useMode();
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <div className="app">
+            <aside>
+              <Sidebar />
+            </aside>
+            <main className="content">
+              <Topbar />
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/tabela-clientes" element={<ClientsTable />} />
+                <Route path="/tabela-exito" element={<SuccessTable />} />
+                <Route
+                  path="/tabela-contratual"
+                  element={<ContractualTable />}
+                />
+              </Routes>
+            </main>
+          </div>
+        </ThemeProvider>
+      </ColorModeContext.Provider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
