@@ -1,12 +1,13 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addIncomeSuccess } from "../store/slices/incomeSlice";
 import {
   buildInitialState,
   contractualFields,
   successFields,
 } from "../configs/formFields";
+import { addContract, addTransactions } from "../store/slices/financeSlice";
+import { generateInstallments } from "../utils/InstallmentGenerator";
 
 const FormTable = ({ type }) => {
   const dispatch = useDispatch();
@@ -27,7 +28,16 @@ const FormTable = ({ type }) => {
   }
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch(addIncomeSuccess({ id: Date.now(), type, ...formData }));
+    const contract = {
+      id: Date.now(),
+      type,
+      ...formData,
+    };
+    dispatch(addContract(contract));
+    if (type === "contractual") {
+      const transactions = generateInstallments(contract);
+      dispatch(addTransactions(transactions));
+    }
     setFormData(buildInitialState(fields));
   }
   return (

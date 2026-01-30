@@ -1,11 +1,10 @@
-import { createSelector } from "@reduxjs/toolkit";
+export const selectSuccessContracts = (state) =>
+  state.finance.contracts.filter((contract) => contract.type === "success");
+export const selectContractualContracts = (state) =>
+  state.finance.contracts.filter((contract) => contract.type === "contractual");
 
-export const selectIncomes = (state) => state.incomes;
-
-export const selectIncomesSuccess = createSelector([selectIncomes], (items) =>
-  items.items.filter((item) => item.type === "success"),
-);
-export const selectIncomesContractual = createSelector(
-  [selectIncomes],
-  (items) => items.items.filter((item) => item.type === "contractual"),
-);
+export const selectTransactionsByMonth = (month, year) => (state) =>
+  state.finance.transactions.filter((t) => {
+    const date = new Date(t.date);
+    return date.getMonth() === month && date.getFullYear() === year;
+  });

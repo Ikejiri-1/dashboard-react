@@ -1,85 +1,16 @@
-import { useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../theme";
-
-const data = [
-  {
-    month: "Jan",
-    ganhos: 200,
-    gastos: 100,
-    meta: 2000,
-  },
-  {
-    month: "Fev",
-    ganhos: 300,
-    gastos: 200,
-    meta: 2000,
-  },
-  {
-    month: "Mar",
-    ganhos: 400,
-    gastos: 300,
-    meta: 2000,
-  },
-  {
-    month: "Abr",
-    ganhos: 500,
-    gastos: 400,
-    meta: 2000,
-  },
-  {
-    month: "Mai",
-    ganhos: 600,
-    gastos: 500,
-    meta: 2000,
-  },
-  {
-    month: "Jun",
-    ganhos: 700,
-    gastos: 600,
-    meta: 2000,
-  },
-  {
-    month: "Jul",
-    ganhos: 800,
-    gastos: 700,
-    meta: 2000,
-  },
-  {
-    month: "Ago",
-    ganhos: 900,
-    gastos: 800,
-    meta: 2000,
-  },
-  {
-    month: "Set",
-    ganhos: 1000,
-    gastos: 900,
-    meta: 2000,
-  },
-  {
-    month: "Out",
-    ganhos: 1100,
-    gastos: 1000,
-    meta: 2000,
-  },
-  {
-    month: "Nov",
-    ganhos: 1200,
-    gastos: 1100,
-    meta: 2000,
-  },
-  {
-    month: "Dez",
-    ganhos: 1300,
-    gastos: 1200,
-    meta: 2000,
-  },
-];
+import { useSelector } from "react-redux";
+import { selectMonthlyChartData } from "../store/selectors/barChartSelector";
+import { useState } from "react";
 
 const BarChart = ({ isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState(currentYear);
+  const data = useSelector(selectMonthlyChartData(year));
   const barColors = ({ id }) => {
     if (id === "ganhos") return "#4cceac";
     if (id === "gastos") return "#db4f4a";
@@ -87,6 +18,10 @@ const BarChart = ({ isDashboard = false }) => {
   };
   return (
     <>
+      <Box>
+        <button onClick={() => setYear((y) => y - 1)}>Ano anterior</button>
+        <button onClick={() => setYear((y) => y + 1)}>Próximo ano</button>
+      </Box>
       <ResponsiveBar /* or Bar for fixed dimensions */
         data={data}
         colors={barColors}

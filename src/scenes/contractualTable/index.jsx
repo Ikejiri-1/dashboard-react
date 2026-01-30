@@ -8,8 +8,8 @@ import Paper from "@mui/material/Paper";
 import { Box } from "@mui/material";
 import Header from "../../components/Header";
 import { useSelector } from "react-redux";
-import { selectIncomesContractual } from "../../store/slices/incomeSelector";
 import FormTable from "../../components/FormTables";
+import { selectContractualContracts } from "../../store/slices/incomeSelector";
 
 const formatCurrency = (value) =>
   Number(value || 0)
@@ -17,7 +17,7 @@ const formatCurrency = (value) =>
     .toLocaleString("pr-BR", { style: "currency", currency: "BRL" });
 
 export default function ContractualTable() {
-  const rows = useSelector(selectIncomesContractual);
+  const rows = useSelector(selectContractualContracts);
   const totalAmount = rows.reduce(
     (sum, row) => sum + Number(row.totalAmount || 0),
     0,

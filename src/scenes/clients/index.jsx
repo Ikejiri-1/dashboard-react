@@ -121,7 +121,7 @@ function rowContent(_index, row) {
 }
 
 export default function ClientsTable() {
-  const rows = useSelector((state) => state.incomes.items);
+  const rows = useSelector((state) => state.customer.items);
 
   return (
     <>

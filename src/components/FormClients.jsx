@@ -1,7 +1,7 @@
-import { Box, Button, MenuItem, Select, TextField } from "@mui/material";
+import { Box, Button, MenuItem, TextField } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addIncomeSuccess } from "../store/slices/incomeSlice";
+import { addCustomer } from "../store/slices/clientSlice";
 
 const FormClients = () => {
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ const FormClients = () => {
   }
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch(addIncomeSuccess({ id: Date.now(), ...formData }));
+    dispatch(addCustomer({ id: Date.now(), ...formData }));
     setFormData({
       firstName: "",
       phone: "",

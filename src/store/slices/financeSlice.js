@@ -1,30 +1,37 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+const loadState = () => {
+  try {
+    const data = localStorage.getItem("finance");
+    return data ? JSON.parse(data) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const saveState = (state) => {
+  localStorage.setItem("finance", JSON.stringify(state));
+};
+
+const initialState = loadState() || {
   contracts: [],
   transactions: [],
-  currentMonth: new Date().toISOString(),
 };
 
 const financeSlice = createSlice({
   name: "finance",
   initialState,
   reducers: {
-    addContract: (state, action) => {
+    addContract(state, action) {
       state.contracts.push(action.payload);
+      saveState(state);
     },
-
-    addTransactions: (state, action) => {
+    addTransactions(state, action) {
       state.transactions.push(...action.payload);
-    },
-
-    setCurrentMonth: (state, action) => {
-      state.currentMonth = action.payload;
+      saveState(state);
     },
   },
 });
 
-export const { addContract, addTransactions, setCurrentMonth } =
-  financeSlice.actions;
-
+export const { addContract, addTransactions } = financeSlice.actions;
 export default financeSlice.reducer;

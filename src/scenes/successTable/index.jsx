@@ -8,15 +8,16 @@ import Paper from "@mui/material/Paper";
 import { Box } from "@mui/material";
 import Header from "../../components/Header";
 import { useSelector } from "react-redux";
-import { selectIncomesSuccess } from "../../store/slices/incomeSelector";
+
 import FormTable from "../../components/FormTables";
+import { selectSuccessContracts } from "../../store/slices/incomeSelector";
 
 const formatCurrency = (value) =>
   Number(value || 0)
     .toFixed(2)
     .toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 export default function SuccessTable() {
-  const rows = useSelector(selectIncomesSuccess);
+  const rows = useSelector(selectSuccessContracts);
   const totalAmount = rows.reduce(
     (sum, row) => sum + Number(row.totalAmount || 0),
     0,
