@@ -29,7 +29,7 @@ const FormClients = () => {
       firstName: "",
       phone: "",
       state: "",
-      status: "SELECIONE UMA OPÇÃO",
+      status: "",
     });
   }
   return (
