@@ -10,6 +10,7 @@ import ClientsTable from "./scenes/clients";
 import SuccessTable from "./scenes/successTable";
 import ContractualTable from "./scenes/contractualTable";
 import Bar from "./scenes/bar";
+import Pie from "./scenes/pie";
 
 // import Form from "./scenes/form";
 // import Calendar from "./scenes/calendar";
@@ -32,6 +33,7 @@ function App() {
                 <Route path="/tabela-clientes" element={<ClientsTable />} />
                 <Route path="/tabela-exito" element={<SuccessTable />} />
                 <Route path="/bar" element={<Bar />} />
+                <Route path="/pie" element={<Pie />} />
                 <Route
                   path="/tabela-contratual"
                   element={<ContractualTable />}

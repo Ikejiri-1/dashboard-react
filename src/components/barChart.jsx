@@ -77,7 +77,7 @@ const data = [
   },
 ];
 
-const BarChart = () => {
+const BarChart = ({ isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const barColors = ({ id }) => {
@@ -92,6 +92,30 @@ const BarChart = () => {
         colors={barColors}
         keys={["gastos", "meta", "ganhos"]}
         indexBy="month"
+        enableTooltip={true}
+        tooltip={({ id, value, indexValue, color }) => (
+          <div
+            style={{
+              padding: "8px 12px",
+              background: "#1f2a40",
+              color: "#fff",
+              borderRadius: 6,
+              border: `1px solid ${color}`,
+              fontSize: 13,
+            }}
+          >
+            <strong style={{ color }}>{id}</strong>
+            <div>
+              {indexValue}:
+              <strong>
+                {Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(value)}
+              </strong>
+            </div>
+          </div>
+        )}
         theme={{
           axis: {
             domain: { line: { stroke: colors.grey[100] } },
@@ -112,12 +136,12 @@ const BarChart = () => {
           },
           legends: {
             text: {
-              fil: colors.grey[100],
+              fill: colors.grey[100],
             },
           },
           labels: {
             text: {
-              fill: colors.blueAccent[400],
+              fill: colors.grey[100],
             },
           },
         }}
@@ -138,10 +162,15 @@ const BarChart = () => {
             symbolSize: 18,
           },
         ]}
-        enableTotals={true}
         totalsOffset={10}
-        axisBottom={{ legend: "meses", legendOffset: 32 }}
-        axisLeft={{ legend: "metas", legendOffset: -40 }}
+        axisBottom={{
+          legend: isDashboard ? undefined : "MESES",
+          legendOffset: 32,
+        }}
+        axisLeft={{
+          legend: isDashboard ? undefined : "METAS",
+          legendOffset: -50,
+        }}
         isFocusable={true}
         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
       />

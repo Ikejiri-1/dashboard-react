@@ -9,7 +9,7 @@ import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import { Calendar } from "@fullcalendar/core/index.js";
+import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
 
 const Item = ({ title, to, icon, setSelected }) => {
   const location = useLocation();
@@ -132,6 +132,11 @@ const Sidebar = () => {
                 title="Grafico de barras"
                 to="/bar"
                 icon={<BarChartOutlinedIcon />}
+              />
+              <Item
+                title="Grafico de pizza"
+                to="/pie"
+                icon={<PieChartOutlineOutlinedIcon />}
               />
             </Box>
           )}
