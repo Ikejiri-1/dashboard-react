@@ -38,6 +38,19 @@ const FormTable = ({ type }) => {
       const transactions = generateInstallments(contract);
       dispatch(addTransactions(transactions));
     }
+    if (type === "success") {
+      dispatch(
+        addTransactions([
+          {
+            id: `${contract.id}-success`,
+            contractId: contract.id,
+            type: "success",
+            value: Number(formData.totalAmount),
+            date: new Date(formData.startMonth).toISOString(),
+          },
+        ]),
+      );
+    }
     setFormData(buildInitialState(fields));
   }
   return (

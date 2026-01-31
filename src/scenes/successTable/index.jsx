@@ -49,7 +49,7 @@ export default function SuccessTable() {
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.id}>
-                <TableCell>{row.costumer}</TableCell>
+                <TableCell>{row.customer}</TableCell>
                 <TableCell align="right">
                   {formatCurrency(row.totalAmount)}
                 </TableCell>

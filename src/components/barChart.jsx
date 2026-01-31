@@ -12,7 +12,8 @@ const BarChart = ({ isDashboard = false }) => {
   const [year, setYear] = useState(currentYear);
   const data = useSelector(selectMonthlyChartData(year));
   const barColors = ({ id }) => {
-    if (id === "ganhos") return "#4cceac";
+    if (id === "ganhos_exito") return "#4cceac";
+    if (id === "ganhos_contratual") return "#0d2874";
     if (id === "gastos") return "#db4f4a";
     if (id === "meta") return "#6870fa";
   };
@@ -21,11 +22,12 @@ const BarChart = ({ isDashboard = false }) => {
       <Box>
         <button onClick={() => setYear((y) => y - 1)}>Ano anterior</button>
         <button onClick={() => setYear((y) => y + 1)}>Próximo ano</button>
+        <strong>Ano: {year}</strong>
       </Box>
       <ResponsiveBar /* or Bar for fixed dimensions */
         data={data}
         colors={barColors}
-        keys={["gastos", "meta", "ganhos"]}
+        keys={["gastos", "meta", "ganhos_exito", "ganhos_contratual"]}
         indexBy="month"
         enableTooltip={true}
         tooltip={({ id, value, indexValue, color }) => (
@@ -81,6 +83,7 @@ const BarChart = ({ isDashboard = false }) => {
           },
         }}
         layout="vertical"
+        enableGridX={true}
         padding={0.35}
         groupMode="grouped"
         labelSkipWidth={18}
@@ -103,7 +106,7 @@ const BarChart = ({ isDashboard = false }) => {
           legendOffset: 32,
         }}
         axisLeft={{
-          legend: isDashboard ? undefined : "METAS",
+          legend: isDashboard ? undefined : "VALORES",
           legendOffset: -50,
         }}
         isFocusable={true}
