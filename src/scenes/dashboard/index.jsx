@@ -9,11 +9,13 @@ const Dashboard = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="Dashboard" subtitle="Welcome to your dashboard" />
       </Box>
-      <Box height="40vh " width="600px">
-        <BarChart isDashboard />
-      </Box>
-      <Box>
-        <PieChart isDashboard />
+      <Box display="flex">
+        <Box height="40vh " width="600px">
+          <BarChart isDashboard />
+        </Box>
+        <Box height="40vh" width="600px">
+          <PieChart isDashboard />
+        </Box>
       </Box>
     </Box>
   );

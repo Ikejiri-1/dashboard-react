@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 import { selectMonthlyChartData } from "../store/selectors/barChartSelector";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import ChevronLeftOutlinedIcon from "@mui/icons-material/ChevronLeftOutlined";
+import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 const BarChart = ({ isDashboard = false }) => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -26,32 +27,36 @@ const BarChart = ({ isDashboard = false }) => {
   }
   return (
     <>
-      <Box mt={5} display="flex" gap={1} alignItems="center">
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => setYear((y) => y - 1)}
-        >
-          Ano anterior
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => setYear(currentYear)}
-        >
-          Ano atual
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => setYear((y) => y + 1)}
-        >
-          Próximo ano
-        </Button>
-        <strong style={{ marginLeft: "16px" }}>Ano: {year}</strong>{" "}
+      <Box mt={5}>
+        <Box ml={8.6}>
+          <strong style={{ marginLeft: "16px" }}>Ano: {year}</strong>{" "}
+        </Box>
+        <Box display="flex" gap={1}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setYear((y) => y - 1)}
+          >
+            <ChevronLeftOutlinedIcon />
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setYear(currentYear)}
+          >
+            Ano atual
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setYear((y) => y + 1)}
+          >
+            <ChevronRightOutlinedIcon />
+          </Button>
+        </Box>
       </Box>
       {isDashboard && (
-        <Box mt={2}>
+        <Box mt={2} ml={5}>
           <Button variant="contained" color="secondary" onClick={linkToChart}>
             Ir ao gráfico maior
           </Button>
@@ -61,7 +66,7 @@ const BarChart = ({ isDashboard = false }) => {
       <ResponsiveBar /* or Bar for fixed dimensions */
         data={data}
         colors={barColors}
-        keys={["gastos", "meta", "total", "ganhos_exito", "ganhos_contratual"]}
+        keys={["total", "ganhos_exito", "ganhos_contratual"]}
         indexBy="month"
         enableTooltip={true}
         tooltip={({ id, value, indexValue, color }) => (
@@ -117,7 +122,6 @@ const BarChart = ({ isDashboard = false }) => {
           },
         }}
         layout="vertical"
-        enableGridX={true}
         padding={0.35}
         groupMode="grouped"
         labelSkipWidth={18}

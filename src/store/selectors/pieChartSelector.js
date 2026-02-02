@@ -1,5 +1,5 @@
 // selectors/pieChartSelector.js
-export const selectPieChartData = (year) => (state) => {
+export const selectPieChartData = (month, year) => (state) => {
   const { transactions } = state.finance;
 
   let ganhos = 0;
@@ -7,7 +7,10 @@ export const selectPieChartData = (year) => (state) => {
 
   transactions.forEach((tx) => {
     const date = new Date(tx.date);
-    if (date.getFullYear() !== year) return;
+
+    if (date.getMonth() !== month || date.getFullYear() !== year) {
+      return;
+    }
 
     if (tx.type === "contractual" || tx.type === "success") {
       ganhos += tx.value;
@@ -21,23 +24,8 @@ export const selectPieChartData = (year) => (state) => {
   const meta = ganhos - gastos;
 
   return [
-    {
-      id: "ganhos",
-      label: "Ganhos",
-      value: ganhos,
-      meta,
-    },
-    {
-      id: "gastos",
-      label: "Gastos",
-      value: gastos,
-      meta,
-    },
-    {
-      id: "meta",
-      label: "Meta",
-      value: meta,
-      meta,
-    },
+    { id: "ganhos", label: "Ganhos", value: ganhos, meta },
+    { id: "gastos", label: "Gastos", value: gastos, meta },
+    { id: "meta", label: "Meta", value: meta, meta },
   ];
 };

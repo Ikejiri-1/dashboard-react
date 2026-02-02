@@ -16,7 +16,6 @@ export const selectMonthlyChartData = (year) => (state) => {
     if (date.getFullYear() !== year) return;
 
     const index = date.getMonth();
-
     if (
       tx.type === "contractual" ||
       tx.type === "success" ||

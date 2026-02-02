@@ -1,6 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+const loadState = () => {
+  try {
+    const data = localStorage.getItem("clients");
+    return data ? JSON.parse(data) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+const saveState = (state) => {
+  localStorage.setItem("clients", JSON.stringify(state));
+};
+const initialState = loadState() || {
   items: [],
   loading: false,
   error: null,
@@ -13,6 +24,7 @@ const incomeSlice = createSlice({
     addCustomer: (state, action) => {
       state.loading = false;
       state.items.push({ ...action.payload });
+      saveState(state);
     },
   },
 });

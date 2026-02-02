@@ -25,7 +25,10 @@ export default function ExpenseTable() {
   return (
     <Box ml={"20px"}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="Tabela de êxito" subtitle="Lista de clientes" />
+        <Header
+          title="Tabela de Gastos"
+          subtitle="Controle os gastos mensais aqui"
+        />
       </Box>
       <FormTable type="expense" />
       <TableContainer
