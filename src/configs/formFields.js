@@ -41,6 +41,26 @@ export const contractualFields = [
     required: true,
   },
 ];
+export const expenseFields = [
+  {
+    name: "origins",
+    label: "Origem",
+    type: "text",
+    required: true,
+  },
+  {
+    name: "totalAmount",
+    label: "Valor",
+    type: "number",
+    required: true,
+  },
+  {
+    name: "startMonth",
+    label: "Data",
+    type: "date",
+    required: true,
+  },
+];
 
 export const buildInitialState = (fields) =>
   fields.reduce((acc, field) => {

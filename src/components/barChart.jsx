@@ -1,11 +1,13 @@
-import { Box, useTheme } from "@mui/material";
+import { Box, Button, useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../theme";
 import { useSelector } from "react-redux";
 import { selectMonthlyChartData } from "../store/selectors/barChartSelector";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BarChart = ({ isDashboard = false }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const currentYear = new Date().getFullYear();
@@ -16,18 +18,50 @@ const BarChart = ({ isDashboard = false }) => {
     if (id === "ganhos_contratual") return "#0d2874";
     if (id === "gastos") return "#db4f4a";
     if (id === "meta") return "#6870fa";
+    if (id === "total") return "#fde400";
   };
+
+  function linkToChart() {
+    navigate(`/charts/bar`);
+  }
   return (
     <>
-      <Box>
-        <button onClick={() => setYear((y) => y - 1)}>Ano anterior</button>
-        <button onClick={() => setYear((y) => y + 1)}>Próximo ano</button>
-        <strong>Ano: {year}</strong>
+      <Box mt={5} display="flex" gap={1} alignItems="center">
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => setYear((y) => y - 1)}
+        >
+          Ano anterior
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => setYear(currentYear)}
+        >
+          Ano atual
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => setYear((y) => y + 1)}
+        >
+          Próximo ano
+        </Button>
+        <strong style={{ marginLeft: "16px" }}>Ano: {year}</strong>{" "}
       </Box>
+      {isDashboard && (
+        <Box mt={2}>
+          <Button variant="contained" color="secondary" onClick={linkToChart}>
+            Ir ao gráfico maior
+          </Button>
+        </Box>
+      )}
+
       <ResponsiveBar /* or Bar for fixed dimensions */
         data={data}
         colors={barColors}
-        keys={["gastos", "meta", "ganhos_exito", "ganhos_contratual"]}
+        keys={["gastos", "meta", "total", "ganhos_exito", "ganhos_contratual"]}
         indexBy="month"
         enableTooltip={true}
         tooltip={({ id, value, indexValue, color }) => (

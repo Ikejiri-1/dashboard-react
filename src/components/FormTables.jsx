@@ -1,17 +1,24 @@
 import { Box, Button, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   buildInitialState,
   contractualFields,
   successFields,
+  expenseFields,
 } from "../configs/formFields";
 import { addContract, addTransactions } from "../store/slices/financeSlice";
 import { generateInstallments } from "../utils/InstallmentGenerator";
 
 const FormTable = ({ type }) => {
   const dispatch = useDispatch();
-  const fields = type === "success" ? successFields : contractualFields;
+
+  const fields = useMemo(() => {
+    if (type === "contractual") return contractualFields;
+    if (type === "success") return successFields;
+    if (type === "expense") return expenseFields;
+    return [];
+  }, [type]);
   const [formData, setFormData] = useState(buildInitialState(fields));
 
   useEffect(() => {
@@ -47,6 +54,26 @@ const FormTable = ({ type }) => {
             type: "success",
             value: Number(formData.totalAmount),
             date: new Date(formData.startMonth).toISOString(),
+          },
+        ]),
+      );
+    }
+    if (type === "expense") {
+      const parsedDate = new Date(formData.startMonth);
+
+      if (isNaN(parsedDate.getTime())) {
+        console.error("Data inválida:", formData.startMonth);
+        return;
+      }
+      dispatch(
+        addTransactions([
+          {
+            id: `${contract.id}-expense`,
+            contractId: contract.id,
+            type: "expense",
+            origins: formData.origins,
+            value: Number(formData.totalAmount),
+            date: parsedDate.toISOString(),
           },
         ]),
       );

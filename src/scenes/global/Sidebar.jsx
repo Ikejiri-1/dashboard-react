@@ -124,18 +124,23 @@ const Sidebar = () => {
                 to="/tabela-contratual"
                 icon={<BackupTableOutlinedIcon />}
               />
+              <Item
+                title="Tabela de gastos"
+                to="/tabela-gastos"
+                icon={<BackupTableOutlinedIcon />}
+              />
 
               <Typography variant="h5" sx={{ m: "2.25rem 0 1rem 3rem" }}>
                 Gráficos
               </Typography>
               <Item
                 title="Grafico de barras"
-                to="/bar"
+                to="/charts/bar"
                 icon={<BarChartOutlinedIcon />}
               />
               <Item
                 title="Grafico de pizza"
-                to="/pie"
+                to="/charts/pie"
                 icon={<PieChartOutlineOutlinedIcon />}
               />
             </Box>
