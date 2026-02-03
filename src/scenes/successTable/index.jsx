@@ -16,10 +16,14 @@ const formatCurrency = (value) =>
   Number(value || 0)
     .toFixed(2)
     .toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const calculateSuccessValue = (total, percentage) => {
+  const pct = percentage > 1 ? percentage / 100 : percentage;
+  return Number(total || 0) * (pct || 0);
+};
 export default function SuccessTable() {
   const rows = useSelector(selectSuccessContracts);
   const totalAmount = rows.reduce(
-    (sum, row) => sum + Number(row.totalAmount || 0),
+    (sum, row) => sum + calculateSuccessValue(row.totalAmount, row.percentage),
     0,
   );
   return (
@@ -35,30 +39,48 @@ export default function SuccessTable() {
         <Table sx={{ minWidth: 700 }} aria-label="spanning table">
           <TableHead>
             <TableRow>
-              <TableCell align="center" colSpan={3}>
-                Detalhes
+              <TableCell align="center" colSpan={5}>
+                Honorários de Êxito
               </TableCell>
-              <TableCell align="right">Valor final</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Cliente</TableCell>
               <TableCell align="right">Valor Total</TableCell>
+              <TableCell align="right">Porcentagem</TableCell>
+              <TableCell align="right">Valor de Êxito</TableCell>
               <TableCell align="right">Ínicio do Contrato</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.customer}</TableCell>
-                <TableCell align="right">
-                  {formatCurrency(row.totalAmount)}
-                </TableCell>
-                <TableCell align="right">{row.startMonth}</TableCell>
-              </TableRow>
-            ))}
+            {rows.map((row) => {
+              const successValue = calculateSuccessValue(
+                row.totalAmount,
+                row.percentage,
+              );
+
+              return (
+                <TableRow key={row.id}>
+                  <TableCell>{row.customer}</TableCell>
+
+                  <TableCell align="right">
+                    {formatCurrency(row.totalAmount)}
+                  </TableCell>
+
+                  <TableCell align="right">
+                    {row.percentage > 1
+                      ? `${row.percentage}%`
+                      : `${row.percentage * 100}%`}
+                  </TableCell>
+                  <TableCell align="right">
+                    {formatCurrency(successValue)}
+                  </TableCell>
+                  <TableCell align="right">{row.startMonth}</TableCell>
+                </TableRow>
+              );
+            })}
             <TableRow>
               <TableCell rowSpan={3} />
-              <TableCell colSpan={2}>Total</TableCell>
+              <TableCell colSpan={3}>Total</TableCell>
               <TableCell align="right">{formatCurrency(totalAmount)}</TableCell>
             </TableRow>
           </TableBody>

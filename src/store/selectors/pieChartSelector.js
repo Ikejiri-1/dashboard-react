@@ -1,4 +1,3 @@
-// selectors/pieChartSelector.js
 export const selectPieChartData = (month, year) => (state) => {
   const { transactions } = state.finance;
 
@@ -12,20 +11,27 @@ export const selectPieChartData = (month, year) => (state) => {
       return;
     }
 
-    if (tx.type === "contractual" || tx.type === "success") {
-      ganhos += tx.value;
+    if (tx.type === "contractual") {
+      ganhos += Number(tx.value) || 0;
+    }
+
+    if (tx.type === "success") {
+      const pctRaw = tx.percentage ?? 0;
+      const percentual = pctRaw > 1 ? pctRaw / 100 : pctRaw;
+
+      ganhos += (Number(tx.value) || 0) * percentual;
     }
 
     if (tx.type === "expense") {
-      gastos += tx.value;
+      gastos += Number(tx.value) || 0;
     }
   });
 
   const meta = ganhos - gastos;
 
   return [
-    { id: "ganhos", label: "Ganhos", value: ganhos, meta },
-    { id: "gastos", label: "Gastos", value: gastos, meta },
-    { id: "meta", label: "Meta", value: meta, meta },
+    { id: "ganhos", label: "Ganhos", value: ganhos },
+    { id: "gastos", label: "Gastos", value: gastos },
+    { id: "meta", label: "Meta", value: meta },
   ];
 };

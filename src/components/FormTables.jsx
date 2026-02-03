@@ -53,6 +53,7 @@ const FormTable = ({ type }) => {
             contractId: contract.id,
             type: "success",
             value: Number(formData.totalAmount),
+            percentage: Number(formData.percentage) / 100,
             date: new Date(formData.startMonth).toISOString(),
           },
         ]),

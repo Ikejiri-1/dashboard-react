@@ -54,8 +54,9 @@ const PieChart = ({ isDashboard = false }) => {
   const pieColors = ({ id }) => {
     if (id === "gastos") return "#db4f4a";
     if (id === "meta") return "#6870fa";
-    if (id === "ganhos") return "#4cceac";
+    if (id === "ganhos") return "#5FDC00";
   };
+  console.log("pie DATA", data);
 
   return (
     <>
@@ -87,67 +88,68 @@ const PieChart = ({ isDashboard = false }) => {
           </Button>
         </Box>
       )}
+      <Box height={400}>
+        <ResponsivePie
+          data={data}
+          colors={pieColors}
+          arcLabelsTextColor={colors.grey[900]}
+          arcLinkLabelsTextColor={colors.grey[100]}
+          enableArcLinkLabels={false}
+          enableTooltip
+          tooltip={({ datum }) => (
+            <div
+              style={{
+                padding: "8px 12px",
+                background: "#1f2a40",
+                color: "#fff",
+                borderRadius: 6,
+                border: `1px solid ${datum.color}`,
+                fontSize: 13,
+              }}
+            >
+              <strong style={{ color: datum.color }}>{datum.label}</strong>
 
-      <ResponsivePie
-        data={data}
-        colors={pieColors}
-        arcLabelsTextColor={colors.grey[900]}
-        arcLinkLabelsTextColor={colors.grey[100]}
-        enableArcLinkLabels={false}
-        enableTooltip
-        tooltip={({ datum }) => (
-          <div
-            style={{
-              padding: "8px 12px",
-              background: "#1f2a40",
-              color: "#fff",
-              borderRadius: 6,
-              border: `1px solid ${datum.color}`,
-              fontSize: 13,
-            }}
-          >
-            <strong style={{ color: datum.color }}>{datum.label}</strong>
+              <div>
+                Valor:{" "}
+                <strong>
+                  {Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  }).format(datum.value)}
+                </strong>
+              </div>
 
-            <div>
-              Valor:{" "}
-              <strong>
+              <div>
+                Meta:{" "}
                 {Intl.NumberFormat("pt-BR", {
                   style: "currency",
                   currency: "BRL",
-                }).format(datum.value)}
-              </strong>
+                }).format(datum.data.meta)}
+              </div>
             </div>
-
-            <div>
-              Meta:{" "}
-              {Intl.NumberFormat("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              }).format(datum.data.meta)}
-            </div>
-          </div>
-        )}
-        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-        innerRadius={0.5}
-        sortByValue
-        legends={[
-          {
-            anchor: "left",
-            direction: "column",
-            translateY: 70,
-            itemWidth: 100,
-            itemHeight: 18,
-            symbolShape: "circle",
-          },
-        ]}
-        theme={{
-          legends: {
-            text: {
-              fill: colors.grey[100],
+          )}
+          margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+          innerRadius={0.5}
+          sortByValue
+          legends={[
+            {
+              anchor: "left",
+              direction: "column",
+              translateY: 70,
+              itemWidth: 100,
+              itemHeight: 18,
+              symbolShape: "circle",
             },
-          },
-        }}
-      />
+          ]}
+          theme={{
+            legends: {
+              text: {
+                fill: colors.grey[100],
+              },
+            },
+          }}
+        />
+      </Box>
     </>
   );
 };

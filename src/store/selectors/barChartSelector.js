@@ -4,6 +4,7 @@ export const selectMonthlyChartData = (year) => (state) => {
   const months = Array.from({ length: 12 }, (_, i) => ({
     month: new Date(year, i, 1).toLocaleString("pt-BR", { month: "short" }),
     ganhos_contratual: 0,
+    ganhos_contratual_exito: 0,
     ganhos_exito: 0,
     total: 0,
     ganhos: 0,
@@ -12,19 +13,22 @@ export const selectMonthlyChartData = (year) => (state) => {
   }));
 
   transactions.forEach((tx) => {
+    console.log(transactions);
     const date = new Date(tx.date);
     if (date.getFullYear() !== year) return;
 
     const index = date.getMonth();
-    if (
-      tx.type === "contractual" ||
-      tx.type === "success" ||
-      tx.type === "expense"
-    ) {
-      months[index].ganhos_contratual +=
-        tx.type === "contractual" ? tx.value : 0;
-      months[index].ganhos_exito += tx.type === "success" ? tx.value : 0;
-      months[index].gastos += tx.type === "expense" ? tx.value : 0;
+    if (tx.type === "contractual") {
+      months[index].ganhos_contratual += tx.value;
+    }
+    if (tx.type === "success") {
+      const pctRaw = tx.percentage ?? 0; // 👈 AQUI está a chave
+      const percentual = pctRaw > 1 ? pctRaw / 100 : pctRaw;
+      const successValue = tx.value * percentual;
+      months[index].ganhos_exito += successValue;
+    }
+    if (tx.type === "expense") {
+      months[index].gastos += tx.value;
     }
   });
   months.forEach((m) => {
