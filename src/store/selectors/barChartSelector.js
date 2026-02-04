@@ -4,7 +4,7 @@ export const selectMonthlyChartData = (year) => (state) => {
   const months = Array.from({ length: 12 }, (_, i) => ({
     month: new Date(year, i, 1).toLocaleString("pt-BR", { month: "short" }),
     ganhos_contratual: 0,
-    ganhos_contratual_exito: 0,
+    contratual_exito: 0,
     ganhos_exito: 0,
     total: 0,
     ganhos: 0,
@@ -30,9 +30,16 @@ export const selectMonthlyChartData = (year) => (state) => {
     if (tx.type === "expense") {
       months[index].gastos += tx.value;
     }
+    if (tx.type === "contractual_exito") {
+      const pctRaw = tx.percentage ?? 0;
+      const percentual = pctRaw > 1 ? pctRaw / 100 : pctRaw;
+
+      const successValue = tx.value * percentual;
+      months[index].contratual_exito += successValue;
+    }
   });
   months.forEach((m) => {
-    m.ganhos = m.ganhos_contratual + m.ganhos_exito;
+    m.ganhos = m.ganhos_contratual + m.ganhos_exito + m.contratual_exito;
     m.meta = m.ganhos - m.gastos;
     m.total = m.ganhos;
   });

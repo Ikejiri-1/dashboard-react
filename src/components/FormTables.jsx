@@ -92,6 +92,9 @@ const FormTable = ({ type }) => {
     >
       {fields.map((field) => (
         <TextField
+          InputLabelProps={{
+            shrink: true,
+          }}
           key={field.name}
           variant="filled"
           label={field.label}

@@ -30,8 +30,16 @@ const financeSlice = createSlice({
       state.transactions.push(...action.payload);
       saveState(state);
     },
+    removeTransaction: (state, action) => {
+      const transactionId = action.payload;
+      state.transactions = state.transactions.filter(
+        (tx) => tx.id !== transactionId,
+      );
+      saveState(state);
+    },
   },
 });
 
-export const { addContract, addTransactions } = financeSlice.actions;
+export const { addContract, addTransactions, removeTransaction } =
+  financeSlice.actions;
 export default financeSlice.reducer;

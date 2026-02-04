@@ -20,6 +20,7 @@ const BarChart = ({ isDashboard = false }) => {
     if (id === "gastos") return "#db4f4a";
     if (id === "meta") return "#6870fa";
     if (id === "total") return "#9bd171";
+    if (id === "contratual_exito") return "#f9f9f8";
   };
 
   function linkToChart() {
@@ -70,6 +71,7 @@ const BarChart = ({ isDashboard = false }) => {
           keys={[
             "ganhos_exito",
             "ganhos_contratual",
+            "contratual_exito",
             "total",
             "meta",
             "gastos",
