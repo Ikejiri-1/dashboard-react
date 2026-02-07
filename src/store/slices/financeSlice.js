@@ -40,9 +40,31 @@ const financeSlice = createSlice({
     },
     removeContract: (state, action) => {
       const contractId = action.payload;
-      state.contracts = state.contracts.filter((ct) => ct.id !== contractId);
+
+      // acha o contrato
+      const contract = state.contracts.find((c) => c.id === contractId);
+
+      if (contract) {
+        // se for êxito e tiver transaction vinculada → remove
+        if (contract.exitoTxId) {
+          state.transactions = state.transactions.filter(
+            (tx) => tx.id !== contract.exitoTxId,
+          );
+        }
+
+        // se for contratual → remove todas as parcelas
+        state.transactions = state.transactions.filter(
+          (tx) => tx.contractId !== contractId,
+        );
+      }
+
+      // remove o contrato
+      state.contracts = state.contracts.filter(
+        (contract) => contract.id !== contractId,
+      );
       saveState(state);
     },
+
     updateContract: (state, action) => {
       const updated = action.payload;
       const index = state.contracts.findIndex((c) => c.id === updated.id);
