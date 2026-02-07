@@ -30,3 +30,9 @@ export const selectTransactionsByMonth = (month, year) => (state) =>
     const date = new Date(t.date);
     return date.getMonth() === month && date.getFullYear() === year;
   });
+
+export const selectClosedSuccessContract = (state) => {
+  state.finance.contracts.filter(
+    (c) => c.type === "success" && c.closed === true,
+  );
+};

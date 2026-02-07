@@ -5,12 +5,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Header from "../../components/Header";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import FormTable from "../../components/FormTables";
 import { selectSuccessContracts } from "../../store/slices/incomeSelector";
+import { toggleContractClosed } from "../../store/slices/financeSlice";
 
 const formatCurrency = (value) =>
   Number(value || 0)
@@ -26,6 +27,7 @@ export default function SuccessTable() {
     (sum, row) => sum + calculateSuccessValue(row.totalAmount, row.percentage),
     0,
   );
+  const dispatch = useDispatch();
   return (
     <Box ml={"20px"}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -48,6 +50,7 @@ export default function SuccessTable() {
               <TableCell align="right">Valor Total</TableCell>
               <TableCell align="right">Porcentagem</TableCell>
               <TableCell align="right">Valor de Êxito</TableCell>
+              <TableCell align="right">Contrato fechado?</TableCell>
               <TableCell align="right">Ínicio do Contrato</TableCell>
             </TableRow>
           </TableHead>
@@ -74,13 +77,23 @@ export default function SuccessTable() {
                   <TableCell align="right">
                     {formatCurrency(successValue)}
                   </TableCell>
+                  <TableCell align="right">
+                    <Button
+                      variant={row.closed ? "contained" : "outlined"}
+                      color={row.closed ? "success" : "warning"}
+                      size="small"
+                      onClick={() => dispatch(toggleContractClosed(row.id))}
+                    >
+                      {row.closed ? "Sim" : "Não"}
+                    </Button>
+                  </TableCell>
                   <TableCell align="right">{row.startMonth}</TableCell>
                 </TableRow>
               );
             })}
             <TableRow>
               <TableCell rowSpan={3} />
-              <TableCell colSpan={3}>Total</TableCell>
+              <TableCell colSpan={4}>Total estimado</TableCell>
               <TableCell align="right">{formatCurrency(totalAmount)}</TableCell>
             </TableRow>
           </TableBody>

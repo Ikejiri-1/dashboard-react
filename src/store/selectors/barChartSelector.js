@@ -22,10 +22,7 @@ export const selectMonthlyChartData = (year) => (state) => {
       months[index].ganhos_contratual += tx.value;
     }
     if (tx.type === "success") {
-      const pctRaw = tx.percentage ?? 0; // 👈 AQUI está a chave
-      const percentual = pctRaw > 1 ? pctRaw / 100 : pctRaw;
-      const successValue = tx.value * percentual;
-      months[index].ganhos_exito += successValue;
+      months[index].ganhos_exito += tx.value * tx.percentage;
     }
     if (tx.type === "expense") {
       months[index].gastos += tx.value;

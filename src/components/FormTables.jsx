@@ -45,20 +45,12 @@ const FormTable = ({ type }) => {
       const transactions = generateInstallments(contract);
       dispatch(addTransactions(transactions));
     }
-    if (type === "success") {
-      dispatch(
-        addTransactions([
-          {
-            id: `${contract.id}-success`,
-            contractId: contract.id,
-            type: "success",
-            value: Number(formData.totalAmount),
-            percentage: Number(formData.percentage) / 100,
-            date: new Date(formData.startMonth).toISOString(),
-          },
-        ]),
-      );
-    }
+    dispatch(
+      addContract({
+        ...contract,
+        closed: false,
+      }),
+    );
     if (type === "expense") {
       const parsedDate = new Date(formData.startMonth);
 
