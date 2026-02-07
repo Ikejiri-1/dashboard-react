@@ -8,10 +8,15 @@ import Paper from "@mui/material/Paper";
 import { Box, Button } from "@mui/material";
 import Header from "../../components/Header";
 import { useDispatch, useSelector } from "react-redux";
-
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import FormTable from "../../components/FormTables";
 import { selectSuccessContracts } from "../../store/slices/incomeSelector";
-import { toggleContractClosed } from "../../store/slices/financeSlice";
+import {
+  removeContract,
+  setEditingContract,
+  toggleContractClosed,
+} from "../../store/slices/financeSlice";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 const formatCurrency = (value) =>
   Number(value || 0)
@@ -88,6 +93,22 @@ export default function SuccessTable() {
                     </Button>
                   </TableCell>
                   <TableCell align="right">{row.startMonth}</TableCell>
+                  <TableCell align="right">
+                    <Button
+                      variant="contained"
+                      color="warning"
+                      onClick={() => dispatch(removeContract(row.id))}
+                    >
+                      <DeleteOutlineOutlinedIcon />
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="info"
+                      onClick={() => dispatch(setEditingContract(row))}
+                    >
+                      <EditOutlinedIcon />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               );
             })}

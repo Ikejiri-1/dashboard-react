@@ -16,6 +16,7 @@ const saveState = (state) => {
 const initialState = loadState() || {
   contracts: [],
   transactions: [],
+  editingContract: null,
 };
 
 const financeSlice = createSlice({
@@ -37,12 +38,30 @@ const financeSlice = createSlice({
       );
       saveState(state);
     },
+    removeContract: (state, action) => {
+      const contractId = action.payload;
+      state.contracts = state.contracts.filter((ct) => ct.id !== contractId);
+      saveState(state);
+    },
+    updateContract: (state, action) => {
+      const updated = action.payload;
+      const index = state.contracts.findIndex((c) => c.id === updated.id);
+      if (index !== -1) {
+        state.contracts[index] = {
+          ...state.contracts[index],
+          ...updated,
+        };
+      }
+    },
+    setEditingContract: (state, action) => {
+      state.editingContract = action.payload;
+    },
+
     toggleContractClosed: (state, action) => {
       const contract = state.contracts.find((c) => c.id === action.payload);
       if (!contract) return;
 
       if (!contract.closed) {
-        // 🔒 FECHANDO → cria transaction
         state.transactions.push({
           id: `${contract.id}-success`,
           contractId: contract.id,
@@ -55,7 +74,6 @@ const financeSlice = createSlice({
           date: new Date(contract.startMonth).toISOString(),
         });
       } else {
-        // 🔓 REABRINDO → remove transaction
         state.transactions = state.transactions.filter(
           (tx) => !(tx.type === "success" && tx.contractId === contract.id),
         );
@@ -72,5 +90,8 @@ export const {
   addTransactions,
   removeTransaction,
   toggleContractClosed,
+  removeContract,
+  updateContract,
+  setEditingContract,
 } = financeSlice.actions;
 export default financeSlice.reducer;

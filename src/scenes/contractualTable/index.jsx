@@ -12,7 +12,13 @@ import FormTable from "../../components/FormTables";
 import { selectContractualContracts } from "../../store/slices/incomeSelector";
 import { useState } from "react";
 import ContractualExitoDialog from "../../components/Dialog";
-import { removeTransaction } from "../../store/slices/financeSlice";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import {
+  removeContract,
+  removeTransaction,
+  setEditingContract,
+} from "../../store/slices/financeSlice";
 
 const formatCurrency = (value) =>
   Number(value || 0)
@@ -105,6 +111,22 @@ export default function ContractualTable() {
                   {row.exitoValue > 0 ? formatCurrency(row.exitoValue) : 0}
                 </TableCell>
                 <TableCell align="right">{row.startMonth}</TableCell>
+                <TableCell align="right">
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={() => dispatch(removeContract(row.id))}
+                  >
+                    <DeleteOutlineOutlinedIcon />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="info"
+                    onClick={() => dispatch(setEditingContract(row))}
+                  >
+                    <EditOutlinedIcon />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
             <TableRow>

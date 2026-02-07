@@ -1,13 +1,18 @@
 import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   buildInitialState,
   contractualFields,
   successFields,
   expenseFields,
 } from "../configs/formFields";
-import { addContract, addTransactions } from "../store/slices/financeSlice";
+import {
+  addContract,
+  addTransactions,
+  setEditingContract,
+  updateContract,
+} from "../store/slices/financeSlice";
 import { generateInstallments } from "../utils/InstallmentGenerator";
 
 const FormTable = ({ type }) => {
@@ -21,6 +26,13 @@ const FormTable = ({ type }) => {
   }, [type]);
   const [formData, setFormData] = useState(buildInitialState(fields));
 
+  const editingContract = useSelector((state) => state.finance.editingContract);
+
+  useEffect(() => {
+    if (editingContract) {
+      setFormData(editingContract);
+    }
+  }, [editingContract]);
   useEffect(() => {
     setFormData(buildInitialState(fields));
   }, [fields]);
@@ -33,46 +45,54 @@ const FormTable = ({ type }) => {
       };
     });
   }
+  function cancelEdit() {
+    dispatch(setEditingContract(null));
+    setFormData("");
+  }
   function handleSubmit(e) {
     e.preventDefault();
+
     const contract = {
-      id: Date.now(),
+      id: editingContract?.id ?? Date.now(),
       type,
+      closed: editingContract?.closed ?? false,
       ...formData,
     };
-    dispatch(addContract(contract));
-    if (type === "contractual") {
-      const transactions = generateInstallments(contract);
-      dispatch(addTransactions(transactions));
-    }
-    dispatch(
-      addContract({
-        ...contract,
-        closed: false,
-      }),
-    );
-    if (type === "expense") {
-      const parsedDate = new Date(formData.startMonth);
 
-      if (isNaN(parsedDate.getTime())) {
-        console.error("Data inválida:", formData.startMonth);
-        return;
+    if (editingContract) {
+      dispatch(updateContract(contract));
+      dispatch(setEditingContract(null));
+    } else {
+      if (type !== "expense") {
+        dispatch(addContract(contract));
       }
-      dispatch(
-        addTransactions([
-          {
-            id: `${contract.id}-expense`,
-            contractId: contract.id,
-            type: "expense",
-            origins: formData.origins,
-            value: Number(formData.totalAmount),
-            date: parsedDate.toISOString(),
-          },
-        ]),
-      );
+
+      if (type === "contractual") {
+        const transactions = generateInstallments(contract);
+        dispatch(addTransactions(transactions));
+      }
+
+      if (type === "expense") {
+        const parsedDate = new Date(formData.startMonth);
+        if (!isNaN(parsedDate.getTime())) {
+          dispatch(
+            addTransactions([
+              {
+                id: `${contract.id}-expense`,
+                type: "expense",
+                origins: formData.origins,
+                value: Number(formData.totalAmount),
+                date: parsedDate.toISOString(),
+              },
+            ]),
+          );
+        }
+      }
     }
+
     setFormData(buildInitialState(fields));
   }
+
   return (
     <Box
       component="form"
@@ -99,8 +119,13 @@ const FormTable = ({ type }) => {
         />
       ))}
       <Button type="submit" variant="contained">
-        Salvar
+        {editingContract ? "Atualizar" : "Salvar"}
       </Button>
+      {editingContract && (
+        <Button color="error" onClick={cancelEdit}>
+          Cancelar edição
+        </Button>
+      )}
     </Box>
   );
 };
