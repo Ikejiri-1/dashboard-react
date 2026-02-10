@@ -23,7 +23,7 @@ import {
 const formatCurrency = (value) =>
   Number(value || 0)
     .toFixed(2)
-    .toLocaleString("pr-BR", { style: "currency", currency: "BRL" });
+    .toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 export default function ContractualTable() {
   const dispatch = useDispatch();

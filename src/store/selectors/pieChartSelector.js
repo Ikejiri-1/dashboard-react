@@ -1,7 +1,9 @@
 export const selectPieChartData = (month, year) => (state) => {
   const { transactions } = state.finance;
 
-  let ganhos = 0;
+  let contratual = 0;
+  let contratual_exito = 0;
+  let exito = 0;
   let gastos = 0;
 
   transactions.forEach((tx) => {
@@ -12,26 +14,38 @@ export const selectPieChartData = (month, year) => (state) => {
     }
 
     if (tx.type === "contractual") {
-      ganhos += Number(tx.value) || 0;
+      contratual += Number(tx.value) || 0;
     }
 
     if (tx.type === "success") {
       const pctRaw = tx.percentage ?? 0;
       const percentual = pctRaw > 1 ? pctRaw / 100 : pctRaw;
 
-      ganhos += (Number(tx.value) || 0) * percentual;
+      exito += (Number(tx.value) || 0) * percentual;
     }
 
     if (tx.type === "expense") {
       gastos += Number(tx.value) || 0;
     }
+    if (tx.type === "contractual_exito") {
+      const pctRaw = tx.percentage ?? 0;
+      const percentual = pctRaw > 1 ? pctRaw / 100 : pctRaw;
+      contratual_exito += (Number(tx.value) || 0) * percentual;
+    }
   });
 
-  const meta = ganhos - gastos;
-
   return [
-    { id: "ganhos", label: "Ganhos", value: ganhos },
-    { id: "gastos", label: "Gastos", value: gastos },
-    { id: "meta", label: "Meta", value: meta },
+    {
+      id: "contratual",
+      label: "Honorário contratual previsto",
+      value: contratual,
+    },
+    { id: "gastos", label: "Gastos previstos", value: gastos },
+    { id: "exito", label: "Honorário de êxito previsto", value: exito },
+    {
+      id: "contratual_exito",
+      label: "Honorário contratual_exito previsto",
+      value: contratual_exito,
+    },
   ];
 };
