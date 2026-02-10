@@ -5,19 +5,6 @@ export const successFields = [
     type: "text",
     required: true,
   },
-  {
-    name: "totalAmount",
-    label: "Valor Total",
-    type: "number",
-    required: true,
-  },
-  { name: "percentage", label: "Porcentagem", type: "number", required: true },
-  {
-    name: "startMonth",
-    label: "Ínicio do Contrato",
-    type: "date",
-    required: true,
-  },
 ];
 
 export const contractualFields = [

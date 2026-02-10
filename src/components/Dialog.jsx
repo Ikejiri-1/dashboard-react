@@ -9,9 +9,12 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addTransactions } from "../store/slices/financeSlice";
+import {
+  addTransactions,
+  confirmSuccessPayment,
+} from "../store/slices/financeSlice";
 
-const ContractualExitoDialog = ({ open, onClose, contract }) => {
+const ExitoDialog = ({ open, onClose, contract, type }) => {
   const dispatch = useDispatch();
   const [percentage, setPercentage] = useState("");
   const [value, setValue] = useState("");
@@ -19,20 +22,32 @@ const ContractualExitoDialog = ({ open, onClose, contract }) => {
   if (!contract) return null;
 
   function handleConfirm() {
-    dispatch(
-      addTransactions([
-        {
-          id: `${contract.id}-contractual-exito`,
-          contractId: contract.id,
-          type: "contractual_exito",
-          value: value,
-          percentage: Number(percentage) / 100,
-          date: new Date(contract.startMonth).toISOString(),
-        },
-      ]),
-    );
+    const numValue = Number(value);
+    const numPct = Number(percentage);
+    const finalValue = numValue * (numPct / 100);
+    const isoDate = new Date().toISOString();
 
-    setPercentage("");
+    dispatch(
+      confirmSuccessPayment({
+        contractId: contract.id,
+        value: numValue,
+        percentage: numPct,
+        date: isoDate,
+      }),
+    );
+    if (type === "success" || type === "contractual_exito") {
+      dispatch(
+        addTransactions([
+          {
+            id: `${contract.id}-${type}`,
+            contractId: contract.id,
+            value: finalValue,
+            type: type,
+            date: isoDate,
+          },
+        ]),
+      );
+    }
     onClose();
   }
 
@@ -69,4 +84,4 @@ const ContractualExitoDialog = ({ open, onClose, contract }) => {
   );
 };
 
-export default ContractualExitoDialog;
+export default ExitoDialog;

@@ -13,31 +13,45 @@ export const selectMonthlyChartData = (year) => (state) => {
   }));
 
   transactions.forEach((tx) => {
-    console.log(transactions);
     const date = new Date(tx.date);
     if (date.getFullYear() !== year) return;
 
     const index = date.getMonth();
-    if (tx.type === "contractual") {
-      months[index].ganhos_contratual += tx.value;
-    }
-    if (tx.type === "success") {
-      months[index].ganhos_exito += tx.value * tx.percentage;
-    }
-    if (tx.type === "expense") {
-      months[index].gastos += tx.value;
-    }
-    if (tx.type === "contractual_exito") {
-      const pctRaw = tx.percentage ?? 0;
-      const percentual = pctRaw > 1 ? pctRaw / 100 : pctRaw;
+    const val = Number(tx.value || 0);
 
-      const successValue = tx.value * percentual;
-      months[index].contratual_exito += successValue;
+    // 1. CONTRATUAL + ENTRADA (Soma os dois no mesmo grupo do gráfico)
+    if (tx.type === "contractual" || tx.type === "entrance") {
+      months[index].ganhos_contratual += val;
+    }
+
+    // 2. SUCESSO PURO (Tabela de Êxito)
+    if (tx.type === "success") {
+      // Nota: Se você já calculou o valor final no Dialog, use apenas tx.value
+      // Se tx.value for o valor bruto da causa, mantenha a multiplicação
+      months[index].ganhos_exito += val;
+    }
+
+    // 3. ÊXITO SOBRE CONTRATO CONTRATUAL
+    if (tx.type === "contractual_exito") {
+      // Como você já calculou o valor líquido no ExitoDialog,
+      // basta somar o tx.value aqui.
+      months[index].contratual_exito += val;
+    }
+
+    // 4. DESPESAS
+    if (tx.type === "expense") {
+      months[index].gastos += val;
     }
   });
+
   months.forEach((m) => {
+    // Ganhos totais do mês
     m.ganhos = m.ganhos_contratual + m.ganhos_exito + m.contratual_exito;
+
+    // Meta/Saldo: O que sobrou após os gastos
     m.meta = m.ganhos - m.gastos;
+
+    // Total para o Nivo Bar usar como referência
     m.total = m.ganhos;
   });
 

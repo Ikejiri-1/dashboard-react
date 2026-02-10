@@ -2,33 +2,47 @@ export function generateInstallments(contract) {
   const { id, entrance, totalAmount, installments, startMonth } = contract;
 
   const transactions = [];
-
-  const entryValue = Number(entrance);
-  const total = Number(totalAmount);
-  const totalInstallments = Number(installments);
+  const entryValue = Number(entrance) || 0;
+  const total = Number(totalAmount) || 0;
+  const totalInstallments = Number(installments) || 0;
 
   const [year, month] = startMonth.split("-");
   const baseDate = new Date(Number(year), Number(month) - 1, 1);
 
-  // 🔹 CASO 1 — TEM ENTRADA
+  // 1. PROCESSAR ENTRADA
   if (entryValue > 0) {
-    // Entrada = parcela 1
     transactions.push({
-      id: `${id}-installment-1`,
+      id: `${id}-entrance`,
       contractId: id,
-      type: "contractual",
+      type: "entrance",
       value: entryValue,
       date: baseDate.toISOString(),
     });
+  }
 
-    const remainingInstallments = totalInstallments - 1;
+  // 2. PROCESSAR PARCELAS
+  if (totalInstallments > 0) {
     const remainingValue = total - entryValue;
-    const installmentValue = remainingValue / remainingInstallments;
 
-    for (let i = 1; i <= remainingInstallments; i++) {
+    // Arredondamos a parcela padrão para 2 casas decimais
+    const installmentValue =
+      Math.floor((remainingValue / totalInstallments) * 100) / 100;
+
+    // Calculamos a diferença de centavos que sobrará na última parcela
+    const totalWithoutLast = installmentValue * (totalInstallments - 1);
+    const lastInstallmentValue = Number(
+      (remainingValue - totalWithoutLast).toFixed(2),
+    );
+
+    // Define o offset do mês: se tem entrada, pula 1 mês. Se não, começa no 0.
+    const monthOffset = entryValue > 0 ? 1 : 0;
+
+    for (let i = 0; i < totalInstallments; i++) {
+      const isLast = i === totalInstallments - 1;
+
       const installmentDate = new Date(
         baseDate.getFullYear(),
-        baseDate.getMonth() + i,
+        baseDate.getMonth() + i + monthOffset,
         1,
       );
 
@@ -36,31 +50,10 @@ export function generateInstallments(contract) {
         id: `${id}-installment-${i + 1}`,
         contractId: id,
         type: "contractual",
-        value: installmentValue,
+        value: isLast ? lastInstallmentValue : installmentValue,
         date: installmentDate.toISOString(),
       });
     }
-
-    return transactions;
-  }
-
-  // 🔹 CASO 2 — SEM ENTRADA
-  const installmentValue = total / totalInstallments;
-
-  for (let i = 0; i < totalInstallments; i++) {
-    const installmentDate = new Date(
-      baseDate.getFullYear(),
-      baseDate.getMonth() + i,
-      1,
-    );
-
-    transactions.push({
-      id: `${id}-installment-${i + 1}`,
-      contractId: id,
-      type: "contractual",
-      value: installmentValue,
-      date: installmentDate.toISOString(),
-    });
   }
 
   return transactions;

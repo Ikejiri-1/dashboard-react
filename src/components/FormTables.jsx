@@ -47,7 +47,7 @@ const FormTable = ({ type }) => {
   }
   function cancelEdit() {
     dispatch(setEditingContract(null));
-    setFormData("");
+    setFormData(fields);
   }
   function handleSubmit(e) {
     e.preventDefault();

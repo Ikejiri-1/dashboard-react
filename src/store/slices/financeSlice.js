@@ -39,29 +39,25 @@ const financeSlice = createSlice({
       saveState(state);
     },
     removeContract: (state, action) => {
-      const contractId = action.payload;
+      const idToDelete = action.payload;
 
-      // acha o contrato
-      const contract = state.contracts.find((c) => c.id === contractId);
+      // 1. Tenta encontrar se é um contrato
+      const contract = state.contracts.find((c) => c.id === idToDelete);
 
       if (contract) {
-        // se for êxito e tiver transaction vinculada → remove
-        if (contract.exitoTxId) {
-          state.transactions = state.transactions.filter(
-            (tx) => tx.id !== contract.exitoTxId,
-          );
-        }
-
-        // se for contratual → remove todas as parcelas
+        // Se for contrato: remove ele e todas as transações vinculadas (parcelas, entradas, êxitos)
         state.transactions = state.transactions.filter(
-          (tx) => tx.contractId !== contractId,
+          (tx) => tx.contractId !== idToDelete,
+        );
+
+        state.contracts = state.contracts.filter((c) => c.id !== idToDelete);
+      } else {
+        // 2. Se não achou no array de contratos, é uma transação avulsa (Ex: Gasto/Despesa)
+        state.transactions = state.transactions.filter(
+          (tx) => tx.id !== idToDelete,
         );
       }
 
-      // remove o contrato
-      state.contracts = state.contracts.filter(
-        (contract) => contract.id !== contractId,
-      );
       saveState(state);
     },
 
@@ -73,36 +69,28 @@ const financeSlice = createSlice({
           ...state.contracts[index],
           ...updated,
         };
+        saveState(state);
       }
     },
     setEditingContract: (state, action) => {
       state.editingContract = action.payload;
     },
 
-    toggleContractClosed: (state, action) => {
-      const contract = state.contracts.find((c) => c.id === action.payload);
-      if (!contract) return;
+    confirmSuccessPayment: (state, action) => {
+      const { contractId, value, percentage, date } = action.payload;
+      const index = state.contracts.findIndex((c) => c.id === contractId);
 
-      if (!contract.closed) {
-        state.transactions.push({
-          id: `${contract.id}-success`,
-          contractId: contract.id,
-          type: "success",
-          value: Number(contract.totalAmount),
-          percentage:
-            contract.percentage > 1
-              ? contract.percentage / 100
-              : contract.percentage,
-          date: new Date(contract.startMonth).toISOString(),
-        });
-      } else {
-        state.transactions = state.transactions.filter(
-          (tx) => !(tx.type === "success" && tx.contractId === contract.id),
-        );
+      if (index !== -1) {
+        // Atualizamos o contrato existente com os novos campos de êxito
+        state.contracts[index] = {
+          ...state.contracts[index],
+          closed: true,
+          totalAmountExito: value, // Valor da causa ganha
+          percentageExito: percentage, // Porcentagem acordada
+          closedMonth: date.substring(0, 7),
+        };
+        saveState(state);
       }
-
-      contract.closed = !contract.closed;
-      saveState(state);
     },
   },
 });
@@ -111,7 +99,7 @@ export const {
   addContract,
   addTransactions,
   removeTransaction,
-  toggleContractClosed,
+  confirmSuccessPayment,
   removeContract,
   updateContract,
   setEditingContract,

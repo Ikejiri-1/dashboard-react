@@ -5,7 +5,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Header from "../../components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -14,9 +14,10 @@ import { selectSuccessContracts } from "../../store/slices/incomeSelector";
 import {
   removeContract,
   setEditingContract,
-  toggleContractClosed,
 } from "../../store/slices/financeSlice";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { useState } from "react";
+import ExitoDialog from "../../components/Dialog";
 
 const formatCurrency = (value) =>
   Number(value || 0)
@@ -27,6 +28,18 @@ const calculateSuccessValue = (total, percentage) => {
   return Number(total || 0) * (pct || 0);
 };
 export default function SuccessTable() {
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selected, setSelected] = useState(false);
+
+  function handleOpenDialog(contract) {
+    setSelected(contract);
+    setOpenDialog(true);
+  }
+  function handleCloseDialog(contract) {
+    setSelected(contract);
+    setOpenDialog(false);
+  }
+
   const rows = useSelector(selectSuccessContracts);
   const totalAmount = rows.reduce(
     (sum, row) => sum + calculateSuccessValue(row.totalAmount, row.percentage),
@@ -56,14 +69,14 @@ export default function SuccessTable() {
               <TableCell align="right">Porcentagem</TableCell>
               <TableCell align="right">Valor de Êxito</TableCell>
               <TableCell align="right">Contrato fechado?</TableCell>
-              <TableCell align="right">Ínicio do Contrato</TableCell>
+              <TableCell align="right">Data de recebimento</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => {
               const successValue = calculateSuccessValue(
-                row.totalAmount,
-                row.percentage,
+                row.totalAmountExito,
+                row.percentageExito,
               );
 
               return (
@@ -71,28 +84,42 @@ export default function SuccessTable() {
                   <TableCell>{row.customer}</TableCell>
 
                   <TableCell align="right">
-                    {formatCurrency(row.totalAmount)}
+                    {row.closed
+                      ? row.totalAmountExito
+                        ? formatCurrency(row.totalAmountExito)
+                        : "---"
+                      : 0}
                   </TableCell>
 
                   <TableCell align="right">
-                    {row.percentage > 1
-                      ? `${row.percentage}%`
-                      : `${row.percentage * 100}%`}
+                    {row.percentageExito > 1
+                      ? `${row.percentageExito}%`
+                      : `${row.percentageExito * 100}%`}
                   </TableCell>
                   <TableCell align="right">
                     {formatCurrency(successValue)}
                   </TableCell>
                   <TableCell align="right">
-                    <Button
-                      variant={row.closed ? "contained" : "outlined"}
-                      color={row.closed ? "success" : "warning"}
-                      size="small"
-                      onClick={() => dispatch(toggleContractClosed(row.id))}
-                    >
-                      {row.closed ? "Sim" : "Não"}
-                    </Button>
+                    {!row.closed ? (
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="warning"
+                        onClick={() => handleOpenDialog(row)}
+                      >
+                        Adicionar
+                      </Button>
+                    ) : (
+                      <Typography
+                        color="success"
+                        variant="body2"
+                        sx={{ fontWeight: "bold" }}
+                      >
+                        Registrado
+                      </Typography>
+                    )}
                   </TableCell>
-                  <TableCell align="right">{row.startMonth}</TableCell>
+                  <TableCell align="right">{row.closedMonth}</TableCell>
                   <TableCell align="right">
                     <Button
                       variant="contained"
@@ -120,6 +147,13 @@ export default function SuccessTable() {
           </TableBody>
         </Table>
       </TableContainer>
+      <ExitoDialog
+        key={selected?.id || "new"}
+        open={openDialog}
+        onClose={handleCloseDialog}
+        contract={selected}
+        type="success"
+      />
     </Box>
   );
 }

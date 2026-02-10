@@ -5,18 +5,17 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Header from "../../components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import FormTable from "../../components/FormTables";
 import { selectContractualContracts } from "../../store/slices/incomeSelector";
 import { useState } from "react";
-import ContractualExitoDialog from "../../components/Dialog";
+import ExitoDialog from "../../components/Dialog";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import {
   removeContract,
-  removeTransaction,
   setEditingContract,
 } from "../../store/slices/financeSlice";
 
@@ -82,33 +81,34 @@ export default function ContractualTable() {
                 <TableCell align="right">
                   {formatCurrency(row.totalAmount)}
                 </TableCell>
-                {!row.exitoValue && (
-                  <TableCell align="right">
+                <TableCell align="right">
+                  {!row.closed ? (
                     <Button
                       size="small"
-                      variant="filled"
-                      sx={{ border: "1px solid #fff" }}
+                      variant="outlined"
+                      color="warning"
                       onClick={() => handleOpenDialog(row)}
                     >
                       Adicionar
                     </Button>
-                  </TableCell>
-                )}
-                {row.exitoValue > 0 && (
-                  <TableCell align="right">
-                    <Button
-                      size="small"
-                      variant="filled"
-                      sx={{ border: "1px solid #fff" }}
-                      color="error"
-                      onClick={() => dispatch(removeTransaction(row.exitoTxId))}
+                  ) : (
+                    <Typography
+                      color="success"
+                      variant="body2"
+                      sx={{ fontWeight: "bold" }}
                     >
-                      Remover
-                    </Button>
-                  </TableCell>
-                )}
+                      Registrado
+                    </Typography>
+                  )}
+                </TableCell>
                 <TableCell align="right">
-                  {row.exitoValue > 0 ? formatCurrency(row.exitoValue) : 0}
+                  {row.closed
+                    ? formatCurrency(
+                        (Number(row.totalAmountExito) *
+                          Number(row.percentageExito)) /
+                          100,
+                      )
+                    : formatCurrency(0)}
                 </TableCell>
                 <TableCell align="right">{row.startMonth}</TableCell>
                 <TableCell align="right">
@@ -140,10 +140,12 @@ export default function ContractualTable() {
           </TableBody>
         </Table>
       </TableContainer>
-      <ContractualExitoDialog
+      <ExitoDialog
+        key={selected?.id || "new"}
         open={openDialog}
         onClose={handleCloseDialog}
         contract={selected}
+        type="contractual_exito"
       />
     </Box>
   );
