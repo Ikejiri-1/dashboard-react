@@ -6,7 +6,7 @@ import Dashboard from "./scenes/dashboard";
 import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Calendar from "./scenes/calendar";
-import ClientsTable from "./scenes/clients";
+import ClientsTable from "./scenes/customers";
 import SuccessTable from "./scenes/successTable";
 import ContractualTable from "./scenes/contractualTable";
 import Bar from "./scenes/bar";

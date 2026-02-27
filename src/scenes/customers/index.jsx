@@ -9,15 +9,16 @@ import Paper from "@mui/material/Paper";
 import { TableVirtuoso } from "react-virtuoso";
 import { Box } from "@mui/material";
 import Header from "../../components/Header";
-import { useSelector } from "react-redux";
-
+// import { useSelector } from "react-redux";
+import { getCustomer } from "../../api/customers";
 import FormClients from "../../components/FormClients";
+import { useState, useEffect } from "react";
 
 const columns = [
   {
     width: 100,
     label: "Nome",
-    dataKey: "firstName",
+    dataKey: "name",
   },
 
   {
@@ -28,12 +29,7 @@ const columns = [
   {
     width: 130,
     label: "Número",
-    dataKey: "phone",
-  },
-  {
-    width: 100,
-    label: "Forma de pagamento",
-    dataKey: "paymentType",
+    dataKey: "phoneNumber",
   },
   {
     width: 100,
@@ -121,7 +117,20 @@ function rowContent(_index, row) {
 }
 
 export default function ClientsTable() {
-  const rows = useSelector((state) => state.customer.items);
+  // const rows = useSelector((state) => state.customer.items);
+  const [rows, setRows] = useState("");
+  useEffect(() => {
+    async function fetchCustomers() {
+      try {
+        const data = await getCustomer();
+        setRows(data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchCustomers();
+  }, []);
+  console.log("rows", rows);
 
   return (
     <>

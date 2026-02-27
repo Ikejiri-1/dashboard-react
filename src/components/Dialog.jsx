@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   addTransactions,
-  confirmSuccessPayment,
+  confirmExitoPayment,
 } from "../store/slices/financeSlice";
 
 const ExitoDialog = ({ open, onClose, contract, type }) => {
@@ -28,7 +28,7 @@ const ExitoDialog = ({ open, onClose, contract, type }) => {
     const isoDate = new Date().toISOString();
 
     dispatch(
-      confirmSuccessPayment({
+      confirmExitoPayment({
         contractId: contract.id,
         value: numValue,
         percentage: numPct,

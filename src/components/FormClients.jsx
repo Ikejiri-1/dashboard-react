@@ -7,8 +7,8 @@ const FormClients = () => {
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    phone: "",
+    name: "",
+    phoneNumber: "",
     state: "",
     paymentType: "",
     status: "",
@@ -26,8 +26,8 @@ const FormClients = () => {
     e.preventDefault();
     dispatch(addCustomer({ id: Date.now(), ...formData }));
     setFormData({
-      firstName: "",
-      phone: "",
+      name: "",
+      phoneNumber: "",
       state: "",
       status: "",
     });
@@ -44,8 +44,8 @@ const FormClients = () => {
       <TextField
         variant="filled"
         label="Nome"
-        name="firstName"
-        value={formData.firstName}
+        name="name"
+        value={formData.name}
         onChange={handleChange}
         required
       />
@@ -53,8 +53,8 @@ const FormClients = () => {
       <TextField
         variant="filled"
         label="Telefone"
-        name="phone"
-        value={formData.phone}
+        name="phoneNumber"
+        value={formData.phoneNumber}
         onChange={handleChange}
         required
       />
@@ -67,22 +67,6 @@ const FormClients = () => {
         onChange={handleChange}
         required
       />
-      <TextField
-        select
-        variant="filled"
-        label="Forma de pagamento"
-        name="paymentType"
-        value={formData.paymentType}
-        onChange={handleChange}
-        required
-        sx={{ width: "200px" }}
-      >
-        <MenuItem value="">
-          <em>Selecione uma opção</em>
-        </MenuItem>
-        <MenuItem value="A VISTA">A VISTA</MenuItem>
-        <MenuItem value="PARCELADO">PARCELADO</MenuItem>
-      </TextField>
 
       <TextField
         select

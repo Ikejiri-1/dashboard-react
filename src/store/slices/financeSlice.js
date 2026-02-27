@@ -31,11 +31,16 @@ const financeSlice = createSlice({
       state.transactions.push(...action.payload);
       saveState(state);
     },
-    removeTransaction: (state, action) => {
-      const transactionId = action.payload;
-      state.transactions = state.transactions.filter(
-        (tx) => tx.id !== transactionId,
-      );
+    removeExito: (state, action) => {
+      const { contractId, exitoTxId } = action.payload;
+      state.transactions.filter((tx) => tx.id !== exitoTxId);
+      const contract = state.contracts.find((c) => c.id === contractId);
+      if (contract) {
+        contract.closed = false;
+        contract.exitoTxId = null;
+        contract.totalAmountExito = 0;
+        contract.percentageExito = 0;
+      }
       saveState(state);
     },
     removeContract: (state, action) => {
@@ -76,7 +81,7 @@ const financeSlice = createSlice({
       state.editingContract = action.payload;
     },
 
-    confirmSuccessPayment: (state, action) => {
+    confirmExitoPayment: (state, action) => {
       const { contractId, value, percentage, date } = action.payload;
       const index = state.contracts.findIndex((c) => c.id === contractId);
 
@@ -98,8 +103,8 @@ const financeSlice = createSlice({
 export const {
   addContract,
   addTransactions,
-  removeTransaction,
-  confirmSuccessPayment,
+  removeExito,
+  confirmExitoPayment,
   removeContract,
   updateContract,
   setEditingContract,
