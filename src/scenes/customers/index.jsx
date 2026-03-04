@@ -7,7 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableVirtuoso } from "react-virtuoso";
-import { Box } from "@mui/material";
+import { Box, Input, InputLabel } from "@mui/material";
 import Header from "../../components/Header";
 // import { useSelector } from "react-redux";
 import { getCustomer } from "../../api/customers";
@@ -81,21 +81,35 @@ const VirtuosoTableComponents = {
   )),
 };
 
-function fixedHeaderContent() {
+function fixedHeaderContent(search, setSearch) {
   return (
-    <TableRow>
-      {columns.map((column) => (
-        <TableCell
-          key={column.dataKey}
-          variant="head"
-          align={column.numeric || false ? "right" : "left"}
-          style={{ width: column.width }}
-          sx={{ backgroundColor: "background.paper" }}
-        >
-          {column.label}
+    <>
+      <TableRow>
+        <TableCell>
+          <InputLabel>Pesquisar</InputLabel>
         </TableCell>
-      ))}
-    </TableRow>
+        <TableCell>
+          <Input
+            placeholder="Pesquise o cliente"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </TableCell>
+      </TableRow>
+
+      <TableRow>
+        {columns.map((column) => (
+          <TableCell
+            key={column.dataKey}
+            variant="head"
+            style={{ width: column.width }}
+            sx={{ backgroundColor: "background.paper" }}
+          >
+            {column.label}
+          </TableCell>
+        ))}
+      </TableRow>
+    </>
   );
 }
 
@@ -117,8 +131,16 @@ function rowContent(_index, row) {
 }
 
 export default function ClientsTable() {
-  // const rows = useSelector((state) => state.customer.items);
-  const [rows, setRows] = useState("");
+  const [rows, setRows] = useState([]);
+  const [search, setSearch] = useState("");
+  const searchLower = search.toLowerCase();
+  const filteredRows = rows.filter(
+    (row) =>
+      row.name.toLowerCase().startsWith(searchLower) ||
+      row.phoneNumber.toLowerCase().includes(search) ||
+      row.status.toLowerCase().includes(searchLower) ||
+      row.state.toLowerCase().includes(searchLower),
+  );
   useEffect(() => {
     async function fetchCustomers() {
       try {
@@ -147,9 +169,9 @@ export default function ClientsTable() {
         <FormClients />
         <Paper style={{ width: "70%", margin: "0 auto", height: "59vh" }}>
           <TableVirtuoso
-            data={rows}
+            data={filteredRows}
             components={VirtuosoTableComponents}
-            fixedHeaderContent={fixedHeaderContent}
+            fixedHeaderContent={() => fixedHeaderContent(search, setSearch)}
             itemContent={rowContent}
           />
         </Paper>

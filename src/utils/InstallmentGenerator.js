@@ -24,11 +24,11 @@ export function generateInstallments(contract) {
   if (totalInstallments > 0) {
     const remainingValue = total - entryValue;
 
-    // Arredondamos a parcela padrão para 2 casas decimais
+    // Arredonda a parcela padrão para 2 casas decimais
     const installmentValue =
       Math.floor((remainingValue / totalInstallments) * 100) / 100;
 
-    // Calculamos a diferença de centavos que sobrará na última parcela
+    // Calcula a diferença de centavos que sobrará na última parcela
     const totalWithoutLast = installmentValue * (totalInstallments - 1);
     const lastInstallmentValue = Number(
       (remainingValue - totalWithoutLast).toFixed(2),
